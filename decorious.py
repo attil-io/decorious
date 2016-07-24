@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import PIL.Image, PIL.ImageFilter
+import PIL.Image, PIL.ImageFilter, PIL.ImageOps
 
 
 class IImage:
@@ -15,18 +15,38 @@ class BaseImage(IImage):
     return self.imgObj
 
 
-class Filter(IImage):
+class ImageDecorator(IImage):
   def getImgObj(self):
-    raise NotImplementedError("cannot call method of Filter.getImgArr on the base class")
+    raise NotImplementedError("cannot call method of ImageDecorator.getImgArr on the base class")
   def __init__(self, img):
     self.img = img
 
 
-class BlurFilter(Filter):
+class BlurFilter(ImageDecorator):
   def __init__(self, img, radius):
-    Filter.__init__(self, img)
+    ImageDecorator.__init__(self, img)
     self.radius = radius
   def getImgObj(self):
     imageIternal = self.img.getImgObj()
     return imageIternal.filter(PIL.ImageFilter.GaussianBlur(self.radius))
-    
+
+
+class ImageFlipper(ImageDecorator):
+  def __init__(self, img):
+    ImageDecorator.__init__(self, img)
+  def getImgObj(self):
+    imageIternal = self.img.getImgObj()
+    return PIL.ImageOps.flip(imageIternal)
+
+
+
+im_raw = PIL.Image.open("lena.gif")
+im_raw = im_raw.convert('L')
+im_obj = BaseImage(im_raw)
+im_obj_flipped = ImageFlipper(im_obj)
+im_obj_flipped_blurred = BlurFilter(im_obj_flipped, 5)
+
+
+im_obj.getImgObj().show("original")
+im_obj_flipped.getImgObj().show("flipped")
+im_obj_flipped_blurred.getImgObj().show("flipped and blurred")
