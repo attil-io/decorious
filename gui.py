@@ -41,15 +41,26 @@ def undo_callback():
     show_image(wrapped_image.get_img_obj())
 
 
+def commit_callback():
+    global wrapped_image
+    wrapped_image = decorious.BaseImage(wrapped_image.get_img_obj())
+    show_image(wrapped_image.get_img_obj())
+
+
+
 blur_button = tkinter.Button(root, text="Blur", command=blur_callback)
 blur_button.pack()
 
-flip_button = tkinter.Button(root, text="Flit", command=flip_callback)
+flip_button = tkinter.Button(root, text="Flip", command=flip_callback)
 flip_button.pack()
 
 
 undo_button = tkinter.Button(root, text="Undo", command=undo_callback)
 undo_button.pack()
+
+
+commit_button = tkinter.Button(root, text="Commit", command=commit_callback)
+commit_button.pack()
 
 
 show_image(wrapped_image.get_img_obj())
