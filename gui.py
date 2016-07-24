@@ -10,7 +10,7 @@ root=tkinter.Tk()
 image_raw = Image.open("lena.gif").convert('L')
 canvas=tkinter.Canvas(root, height=200, width=200)
 
-image_obj = decorious.BaseImage(image_raw)
+wrapped_image = decorious.BaseImage(image_raw)
 
 def show_image(image):
     canvas.delete("all")
@@ -25,23 +25,33 @@ def show_image(image):
 
 
 def blur_callback():
-    global image_obj
-    image_obj = decorious.BlurFilter(image_obj, 5)
-    show_image(image_obj.get_img_obj())
+    global wrapped_image
+    wrapped_image = decorious.BlurFilter(wrapped_image, 5)
+    show_image(wrapped_image.get_img_obj())
 
-def rotate_callback():
-    global image_obj
-    image_obj = decorious.ImageFlipper(image_obj)
-    show_image(image_obj.get_img_obj())
+def flip_callback():
+    global wrapped_image
+    wrapped_image = decorious.ImageFlipper(wrapped_image)
+    show_image(wrapped_image.get_img_obj())
+
+
+def undo_callback():
+    global wrapped_image
+    wrapped_image = wrapped_image.get_parent()
+    show_image(wrapped_image.get_img_obj())
 
 
 blur_button = tkinter.Button(root, text="Blur", command=blur_callback)
 blur_button.pack()
 
-rotate_button = tkinter.Button(root, text="Rotate", command=rotate_callback)
-rotate_button.pack()
+flip_button = tkinter.Button(root, text="Flit", command=flip_callback)
+flip_button.pack()
 
 
-show_image(image_obj.get_img_obj())
+undo_button = tkinter.Button(root, text="Undo", command=undo_callback)
+undo_button.pack()
+
+
+show_image(wrapped_image.get_img_obj())
 
 root.mainloop()
